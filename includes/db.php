@@ -13,7 +13,7 @@ require_once __DIR__ . '/config.php';
  *
  * @return PDO
  */
-function db(): PDO
+function db()
 {
   static $pdo = null;
 
@@ -23,16 +23,15 @@ function db(): PDO
 
   $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
 
-  $options = [
-    // Throw exceptions on errors (easier to debug).
+  $options = array(
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    // Fetch associative arrays by default (nice for templates).
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    // Use native prepared statements.
     PDO::ATTR_EMULATE_PREPARES => false,
-  ];
+  );
 
   $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+  // Ensure charset on older PHP/MySQL driver (WAMP 2.4)
+  $pdo->exec('SET NAMES ' . (defined('DB_CHARSET') ? DB_CHARSET : 'utf8mb4'));
   return $pdo;
 }
 

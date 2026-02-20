@@ -19,10 +19,10 @@ $name = '';
 $email = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $name = input($_POST, 'name') ?? '';
-  $email = input($_POST, 'email') ?? '';
-  $password = input($_POST, 'password') ?? '';
-  $password2 = input($_POST, 'password_confirm') ?? '';
+  $name = coalesce(input($_POST, 'name'), '');
+  $email = coalesce(input($_POST, 'email'), '');
+  $password = coalesce(input($_POST, 'password'), '');
+  $password2 = coalesce(input($_POST, 'password_confirm'), '');
 
   // Basic validation. (You can make this stricter if desired.)
   if ($name === '' || mb_strlen($name) < 2) {
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ' . url('/dashboard.php'));
         exit;
       }
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       // If DB is not set up yet, this message helps quickly.
       $errors[] = 'Registration failed. Please check database setup. (' . $e->getMessage() . ')';
     }

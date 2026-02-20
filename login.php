@@ -18,8 +18,8 @@ $errors = [];
 $email = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $email = input($_POST, 'email') ?? '';
-  $password = input($_POST, 'password') ?? '';
+  $email = coalesce(input($_POST, 'email'), '');
+  $password = coalesce(input($_POST, 'password'), '');
 
   if ($email === '' || !is_valid_email($email)) {
     $errors[] = 'Please enter a valid email address.';
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ' . url('/dashboard.php'));
         exit;
       }
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       $errors[] = 'Login failed. Please check database setup. (' . $e->getMessage() . ')';
     }
   }

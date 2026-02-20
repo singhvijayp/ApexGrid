@@ -18,15 +18,15 @@ $errors = [];
 $teams = [];
 try {
   $teams = db()->query('SELECT id, name FROM teams ORDER BY name ASC')->fetchAll();
-} catch (Throwable $e) {
+} catch (Exception $e) {
   $errors[] = 'Database not ready. Import `schema.sql`. (' . $e->getMessage() . ')';
 }
 
 // Handle create
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'create_driver')) {
-  $team_id = (int)(input($_POST, 'team_id') ?? 0);
-  $first_name = input($_POST, 'first_name') ?? '';
-  $last_name = input($_POST, 'last_name') ?? '';
+  $team_id = (int)coalesce(input($_POST, 'team_id'), 0);
+  $first_name = coalesce(input($_POST, 'first_name'), '');
+  $last_name = coalesce(input($_POST, 'last_name'), '');
   $nationality = input($_POST, 'nationality');
   $date_of_birth = input($_POST, 'date_of_birth');
   $driver_number = input($_POST, 'driver_number');
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'creat
       flash_set('success', 'Driver created.');
       header('Location: ' . url('/drivers.php'));
       exit;
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       $errors[] = 'Could not create driver. (' . $e->getMessage() . ')';
     }
   }
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'creat
 
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'delete_driver')) {
-  $id = (int)(input($_POST, 'id') ?? 0);
+  $id = (int)coalesce(input($_POST, 'id'), 0);
   if ($id > 0) {
     try {
       $stmt = db()->prepare('DELETE FROM drivers WHERE id = :id');
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'delet
       flash_set('info', 'Driver deleted.');
       header('Location: ' . url('/drivers.php'));
       exit;
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       $errors[] = 'Could not delete driver. (' . $e->getMessage() . ')';
     }
   }
@@ -225,8 +225,8 @@ render_header('Drivers', true);
                 <tr>
                   <td><strong><?= e($d['first_name'] . ' ' . $d['last_name']) ?></strong></td>
                   <td><?= e($d['team_name']) ?></td>
-                  <td><?= e($d['nationality'] ?? '') ?></td>
-                  <td><?= e($d['date_of_birth'] ?? '') ?></td>
+                  <td><?= e(coalesce($d['nationality'], '')) ?></td>
+                  <td><?= e(coalesce($d['date_of_birth'], '')) ?></td>
                   <td><?= e($d['driver_number'] ? (string)$d['driver_number'] : '') ?></td>
                   <td>
                     <form method="post" action="<?= e(url('/drivers.php')) ?>" onsubmit="return confirm('Delete this driver?');" style="display:inline;">

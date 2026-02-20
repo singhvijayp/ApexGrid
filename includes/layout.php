@@ -20,7 +20,7 @@ require_once __DIR__ . '/auth.php';
  * @param bool $requireAuth If true, show the authenticated navigation
  * @return void
  */
-function render_header(string $title, bool $requireAuth = false): void
+function render_header($title, $requireAuth = false)
 {
   $user = current_user();
   if ($requireAuth && !$user) {
@@ -81,7 +81,7 @@ function render_header(string $title, bool $requireAuth = false): void
  *
  * @return void
  */
-function render_footer(): void
+function render_footer()
 {
   ?>
     </main>

@@ -13,7 +13,7 @@ require_once __DIR__ . '/db.php';
  *
  * @return array|null
  */
-function current_user(): ?array
+function current_user()
 {
   if (empty($_SESSION['user_id'])) {
     return null;
@@ -44,7 +44,7 @@ function current_user(): ?array
  *
  * @return void
  */
-function require_login(): void
+function require_login()
 {
   if (!current_user()) {
     header('Location: ' . BASE_PATH . '/login.php');
@@ -58,7 +58,7 @@ function require_login(): void
  * @param int $user_id
  * @return void
  */
-function login_user(int $user_id): void
+function login_user($user_id)
 {
   // Prevent session fixation by regenerating the ID on login.
   session_regenerate_id(true);
@@ -71,7 +71,7 @@ function login_user(int $user_id): void
  *
  * @return void
  */
-function logout_user(): void
+function logout_user()
 {
   unset($_SESSION['user_id'], $_SESSION['user_cache']);
 

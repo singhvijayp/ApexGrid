@@ -13,9 +13,9 @@ require_once __DIR__ . '/config.php';
  * @param string|null $value
  * @return string
  */
-function e(?string $value): string
+function e($value)
 {
-  return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+  return htmlspecialchars((string)$value, ENT_QUOTES | (defined('ENT_SUBSTITUTE') ? ENT_SUBSTITUTE : 0), 'UTF-8');
 }
 
 /**
@@ -24,7 +24,7 @@ function e(?string $value): string
  * @param string $path
  * @return string
  */
-function url(string $path): string
+function url($path)
 {
   $path = '/' . ltrim($path, '/');
   return BASE_PATH . $path;
@@ -37,7 +37,7 @@ function url(string $path): string
  * @param string $message
  * @return void
  */
-function flash_set(string $type, string $message): void
+function flash_set($type, $message)
 {
   $_SESSION['flash'] = ['type' => $type, 'message' => $message];
 }
@@ -47,7 +47,7 @@ function flash_set(string $type, string $message): void
  *
  * @return array|null
  */
-function flash_get(): ?array
+function flash_get()
 {
   if (empty($_SESSION['flash'])) {
     return null;
@@ -63,7 +63,7 @@ function flash_get(): ?array
  * @param string $email
  * @return bool
  */
-function is_valid_email(string $email): bool
+function is_valid_email($email)
 {
   return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
 }
@@ -75,7 +75,7 @@ function is_valid_email(string $email): bool
  * @param string $key
  * @return string|null
  */
-function input(array $source, string $key): ?string
+function input($source, $key)
 {
   if (!array_key_exists($key, $source)) {
     return null;
@@ -85,5 +85,17 @@ function input(array $source, string $key): ?string
     $value = trim($value);
   }
   return ($value === '') ? null : (string)$value;
+}
+
+/**
+ * Null coalescing for PHP 5.4 (replacement for ?? operator).
+ *
+ * @param mixed $value
+ * @param mixed $default
+ * @return mixed
+ */
+function coalesce($value, $default)
+{
+  return isset($value) ? $value : $default;
 }
 

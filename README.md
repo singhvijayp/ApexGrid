@@ -28,18 +28,21 @@ This is a simple, working **motorsports management system** built with:
 
 ### Setup (WAMP + phpMyAdmin)
 
-1) **Copy project** into your web root (you already have it here):
+Compatible with **WAMP 2.4 64-bit** (PHP 5.4+) and **WAMP 3.3 32-bit** (PHP 7.x).
 
-- `C:\wamp\www\apexgrid\cursor`
+1) **Copy project** into your web root:
+
+- **WAMP 2.4 64-bit:** `C:\wamp64\www\apexgrid`
+- **WAMP 3.3 32-bit:** `C:\wamp\www\apexgrid`
 
 2) **Create the database**
 
 - Open phpMyAdmin (usually `http://localhost/phpmyadmin/`)
-- Create a database named: `motorsports_mgmt`
+- Create a database named: `apexgrid` (or the name you set in `DB_NAME` in config)
 
 3) **Import the schema**
 
-- Select `gmt`
+- Select the database you created (e.g. `apexgrid`)
 - Import `schema.sql` from this project folder
 
 4) **Configure DB credentials**
@@ -54,9 +57,10 @@ Make sure these match your MySQL settings:
 
 5) **Open the app**
 
-Visit:
+Visit (adjust host and path if you use a different folder):
 
-- `http://localhost/apexgrid/cursor/`
+- `http://localhost/apexgrid/`  
+  (Ensure `BASE_PATH` in `includes/config.php` matches, e.g. `'/apexgrid'` if the app is in a subfolder.)
 
 ### Notes
 

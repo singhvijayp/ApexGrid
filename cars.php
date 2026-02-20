@@ -18,16 +18,16 @@ $errors = [];
 $teams = [];
 try {
   $teams = db()->query('SELECT id, name FROM teams ORDER BY name ASC')->fetchAll();
-} catch (Throwable $e) {
+} catch (Exception $e) {
   $errors[] = 'Database not ready. Import `schema.sql`. (' . $e->getMessage() . ')';
 }
 
 // Handle create
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'create_car')) {
-  $team_id = (int)(input($_POST, 'team_id') ?? 0);
-  $model = input($_POST, 'model') ?? '';
+  $team_id = (int)coalesce(input($_POST, 'team_id'), 0);
+  $model = coalesce(input($_POST, 'model'), '');
   $manufacturer = input($_POST, 'manufacturer');
-  $season_year = (int)(input($_POST, 'season_year') ?? 0);
+  $season_year = (int)coalesce(input($_POST, 'season_year'), 0);
   $engine = input($_POST, 'engine');
   $horsepower = input($_POST, 'horsepower');
   $image_url = input($_POST, 'image_url');
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'creat
       flash_set('success', 'Car added to catalogue.');
       header('Location: ' . url('/cars.php'));
       exit;
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       $errors[] = 'Could not create car. (' . $e->getMessage() . ')';
     }
   }
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'creat
 
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'delete_car')) {
-  $id = (int)(input($_POST, 'id') ?? 0);
+  $id = (int)coalesce(input($_POST, 'id'), 0);
   if ($id > 0) {
     try {
       $stmt = db()->prepare('DELETE FROM cars WHERE id = :id');
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'delet
       flash_set('info', 'Car deleted.');
       header('Location: ' . url('/cars.php'));
       exit;
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       $errors[] = 'Could not delete car. (' . $e->getMessage() . ')';
     }
   }

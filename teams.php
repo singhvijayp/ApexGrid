@@ -16,7 +16,7 @@ $errors = [];
 
 // Handle create
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'create_team')) {
-  $name = input($_POST, 'name') ?? '';
+  $name = coalesce(input($_POST, 'name'), '');
   $base_country = input($_POST, 'base_country');
   $principal = input($_POST, 'principal');
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'creat
       flash_set('success', 'Team created.');
       header('Location: ' . url('/teams.php'));
       exit;
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       $errors[] = 'Could not create team. (' . $e->getMessage() . ')';
     }
   }
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'creat
 
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'delete_team')) {
-  $id = (int)(input($_POST, 'id') ?? 0);
+  $id = (int)coalesce(input($_POST, 'id'), 0);
   if ($id > 0) {
     try {
       $stmt = db()->prepare('DELETE FROM teams WHERE id = :id');
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'delet
       flash_set('info', 'Team deleted (if not referenced by cars/drivers).');
       header('Location: ' . url('/teams.php'));
       exit;
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       // If FK restrict blocks deletion, MySQL will throw an error.
       $errors[] = 'Could not delete team. Remove related cars/drivers first. (' . $e->getMessage() . ')';
     }
@@ -138,8 +138,8 @@ render_header('Teams', true);
               <?php foreach ($teams as $t): ?>
                 <tr>
                   <td><strong><?= e($t['name']) ?></strong></td>
-                  <td><?= e($t['base_country'] ?? '') ?></td>
-                  <td><?= e($t['principal'] ?? '') ?></td>
+                  <td><?= e(coalesce($t['base_country'], '')) ?></td>
+                  <td><?= e(coalesce($t['principal'], '')) ?></td>
                   <td>
                     <form method="post" action="<?= e(url('/teams.php')) ?>" onsubmit="return confirm('Delete this team? This may fail if cars/drivers still reference it.');" style="display:inline;">
                       <input type="hidden" name="action" value="delete_team">

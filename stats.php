@@ -18,13 +18,13 @@ $errors = [];
 
 // Handle driver stats update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'update_driver_stats')) {
-  $driver_id = (int)(input($_POST, 'driver_id') ?? 0);
-  $races = (int)(input($_POST, 'races') ?? 0);
-  $wins = (int)(input($_POST, 'wins') ?? 0);
-  $podiums = (int)(input($_POST, 'podiums') ?? 0);
-  $poles = (int)(input($_POST, 'poles') ?? 0);
-  $points = (int)(input($_POST, 'points') ?? 0);
-  $championships = (int)(input($_POST, 'championships') ?? 0);
+  $driver_id = (int)coalesce(input($_POST, 'driver_id'), 0);
+  $races = (int)coalesce(input($_POST, 'races'), 0);
+  $wins = (int)coalesce(input($_POST, 'wins'), 0);
+  $podiums = (int)coalesce(input($_POST, 'podiums'), 0);
+  $poles = (int)coalesce(input($_POST, 'poles'), 0);
+  $points = (int)coalesce(input($_POST, 'points'), 0);
+  $championships = (int)coalesce(input($_POST, 'championships'), 0);
 
   if ($driver_id <= 0) {
     $errors[] = 'Invalid driver selection.';
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'updat
       flash_set('success', 'Driver stats updated.');
       header('Location: ' . url('/stats.php'));
       exit;
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       $errors[] = 'Could not update driver stats. (' . $e->getMessage() . ')';
     }
   }
@@ -63,12 +63,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'updat
 
 // Handle car stats update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'update_car_stats')) {
-  $car_id = (int)(input($_POST, 'car_id') ?? 0);
-  $races = (int)(input($_POST, 'races') ?? 0);
-  $wins = (int)(input($_POST, 'wins') ?? 0);
-  $poles = (int)(input($_POST, 'poles') ?? 0);
-  $fastest_laps = (int)(input($_POST, 'fastest_laps') ?? 0);
-  $points = (int)(input($_POST, 'points') ?? 0);
+  $car_id = (int)coalesce(input($_POST, 'car_id'), 0);
+  $races = (int)coalesce(input($_POST, 'races'), 0);
+  $wins = (int)coalesce(input($_POST, 'wins'), 0);
+  $poles = (int)coalesce(input($_POST, 'poles'), 0);
+  $fastest_laps = (int)coalesce(input($_POST, 'fastest_laps'), 0);
+  $points = (int)coalesce(input($_POST, 'points'), 0);
 
   if ($car_id <= 0) {
     $errors[] = 'Invalid car selection.';
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (input($_POST, 'action') === 'updat
       flash_set('success', 'Car stats updated.');
       header('Location: ' . url('/stats.php'));
       exit;
-    } catch (Throwable $e) {
+    } catch (Exception $e) {
       $errors[] = 'Could not update car stats. (' . $e->getMessage() . ')';
     }
   }
@@ -124,7 +124,7 @@ try {
      LEFT JOIN car_stats s ON s.car_id = c.id
      ORDER BY s.points DESC, c.season_year DESC'
   )->fetchAll();
-} catch (Throwable $e) {
+} catch (Exception $e) {
   $errors[] = 'Database not ready. Import `schema.sql`. (' . $e->getMessage() . ')';
 }
 
@@ -176,12 +176,12 @@ render_header('Stats', true);
                 <tr>
                   <td><strong><?= e($r['driver_name']) ?></strong></td>
                   <td><?= e($r['team_name']) ?></td>
-                  <td><?= e((string)($r['races'] ?? 0)) ?></td>
-                  <td><?= e((string)($r['wins'] ?? 0)) ?></td>
-                  <td><?= e((string)($r['podiums'] ?? 0)) ?></td>
-                  <td><?= e((string)($r['poles'] ?? 0)) ?></td>
-                  <td><strong><?= e((string)($r['points'] ?? 0)) ?></strong></td>
-                  <td><?= e((string)($r['championships'] ?? 0)) ?></td>
+                  <td><?= e((string)coalesce($r['races'], 0)) ?></td>
+                  <td><?= e((string)coalesce($r['wins'], 0)) ?></td>
+                  <td><?= e((string)coalesce($r['podiums'], 0)) ?></td>
+                  <td><?= e((string)coalesce($r['poles'], 0)) ?></td>
+                  <td><strong><?= e((string)coalesce($r['points'], 0)) ?></strong></td>
+                  <td><?= e((string)coalesce($r['championships'], 0)) ?></td>
                   <td>
                     <details>
                       <summary class="btn" style="display:inline-block;">Edit</summary>
@@ -189,14 +189,14 @@ render_header('Stats', true);
                         <input type="hidden" name="action" value="update_driver_stats">
                         <input type="hidden" name="driver_id" value="<?= e((string)$r['driver_id']) ?>">
                         <div class="grid grid--3">
-                          <label>Races <input type="number" name="races" min="0" value="<?= e((string)($r['races'] ?? 0)) ?>"></label>
-                          <label>Wins <input type="number" name="wins" min="0" value="<?= e((string)($r['wins'] ?? 0)) ?>"></label>
-                          <label>Podiums <input type="number" name="podiums" min="0" value="<?= e((string)($r['podiums'] ?? 0)) ?>"></label>
+                          <label>Races <input type="number" name="races" min="0" value="<?= e((string)coalesce($r['races'], 0)) ?>"></label>
+                          <label>Wins <input type="number" name="wins" min="0" value="<?= e((string)coalesce($r['wins'], 0)) ?>"></label>
+                          <label>Podiums <input type="number" name="podiums" min="0" value="<?= e((string)coalesce($r['podiums'], 0)) ?>"></label>
                         </div>
                         <div class="grid grid--3">
-                          <label>Poles <input type="number" name="poles" min="0" value="<?= e((string)($r['poles'] ?? 0)) ?>"></label>
-                          <label>Points <input type="number" name="points" min="0" value="<?= e((string)($r['points'] ?? 0)) ?>"></label>
-                          <label>Championships <input type="number" name="championships" min="0" value="<?= e((string)($r['championships'] ?? 0)) ?>"></label>
+                          <label>Poles <input type="number" name="poles" min="0" value="<?= e((string)coalesce($r['poles'], 0)) ?>"></label>
+                          <label>Points <input type="number" name="points" min="0" value="<?= e((string)coalesce($r['points'], 0)) ?>"></label>
+                          <label>Championships <input type="number" name="championships" min="0" value="<?= e((string)coalesce($r['championships'], 0)) ?>"></label>
                         </div>
                         <div class="actions">
                           <button class="btn btn--primary" type="submit">Save</button>
@@ -242,11 +242,11 @@ render_header('Stats', true);
                   <td><strong><?= e($r['model']) ?></strong></td>
                   <td><?= e($r['team_name']) ?></td>
                   <td><?= e((string)$r['season_year']) ?></td>
-                  <td><?= e((string)($r['races'] ?? 0)) ?></td>
-                  <td><?= e((string)($r['wins'] ?? 0)) ?></td>
-                  <td><?= e((string)($r['poles'] ?? 0)) ?></td>
-                  <td><?= e((string)($r['fastest_laps'] ?? 0)) ?></td>
-                  <td><strong><?= e((string)($r['points'] ?? 0)) ?></strong></td>
+                  <td><?= e((string)coalesce($r['races'], 0)) ?></td>
+                  <td><?= e((string)coalesce($r['wins'], 0)) ?></td>
+                  <td><?= e((string)coalesce($r['poles'], 0)) ?></td>
+                  <td><?= e((string)coalesce($r['fastest_laps'], 0)) ?></td>
+                  <td><strong><?= e((string)coalesce($r['points'], 0)) ?></strong></td>
                   <td>
                     <details>
                       <summary class="btn" style="display:inline-block;">Edit</summary>
@@ -254,13 +254,13 @@ render_header('Stats', true);
                         <input type="hidden" name="action" value="update_car_stats">
                         <input type="hidden" name="car_id" value="<?= e((string)$r['car_id']) ?>">
                         <div class="grid grid--3">
-                          <label>Races <input type="number" name="races" min="0" value="<?= e((string)($r['races'] ?? 0)) ?>"></label>
-                          <label>Wins <input type="number" name="wins" min="0" value="<?= e((string)($r['wins'] ?? 0)) ?>"></label>
-                          <label>Poles <input type="number" name="poles" min="0" value="<?= e((string)($r['poles'] ?? 0)) ?>"></label>
+                          <label>Races <input type="number" name="races" min="0" value="<?= e((string)coalesce($r['races'], 0)) ?>"></label>
+                          <label>Wins <input type="number" name="wins" min="0" value="<?= e((string)coalesce($r['wins'], 0)) ?>"></label>
+                          <label>Poles <input type="number" name="poles" min="0" value="<?= e((string)coalesce($r['poles'], 0)) ?>"></label>
                         </div>
                         <div class="grid grid--2">
-                          <label>Fastest laps <input type="number" name="fastest_laps" min="0" value="<?= e((string)($r['fastest_laps'] ?? 0)) ?>"></label>
-                          <label>Points <input type="number" name="points" min="0" value="<?= e((string)($r['points'] ?? 0)) ?>"></label>
+                          <label>Fastest laps <input type="number" name="fastest_laps" min="0" value="<?= e((string)coalesce($r['fastest_laps'], 0)) ?>"></label>
+                          <label>Points <input type="number" name="points" min="0" value="<?= e((string)coalesce($r['points'], 0)) ?>"></label>
                         </div>
                         <div class="actions">
                           <button class="btn btn--primary" type="submit">Save</button>

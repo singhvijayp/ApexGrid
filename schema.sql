@@ -1,5 +1,5 @@
 -- Motorsports Management System
--- Database schema for MySQL 8.x / MariaDB 10.x
+-- Database schema for MySQL 5.5+ (WAMP 2.4 64-bit) / MySQL 8.x / MariaDB 10.x
 --
 -- How to use:
 -- 1) Create a database (e.g. apexgrid) in phpMyAdmin
